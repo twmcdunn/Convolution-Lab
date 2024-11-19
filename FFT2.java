@@ -9,6 +9,8 @@ import java.util.Comparator;
 
 The math3 dependency can be found at https://repo.maven.apache.org/maven2/org/apache/commons/commons-math3/3.6.1/
  * 
+ * Basic explainations of convolution can be found here: https://cmtext.indiana.edu/synthesis/chapter4_convolution.php
+ * 
  * Write a description of class FFT2 here.
  *
  * @author (your name)
@@ -162,9 +164,30 @@ public class FFT2
         return processed;
     }
 
+    public static double[] convAsImaginaryProduct(double[] sig1, double[] sig2){
+Complex[] freqDom1 = forwardTransformComplex(sig1);
+Complex[] freqDom2 = forwardTransformComplex(sig2);
+Complex[] freqProd = new Complex[freqDom1.length];
+for(int i = 0; i < freqDom1.length; i++){
+    double r1 = freqDom1[i].getReal();
+    double r2 = freqDom2[i].getReal();
+    double i1 = freqDom1[i].getImaginary();
+    double i2 = freqDom2[i].getImaginary();
+    double rProd = r1 * r2 - i1 * i2;
+    double iProd = r1 * i2 + r2 * i1;
+    freqProd[i] = new Complex(rProd, iProd);
+}
+Complex[] timeDomain = inverseTransform(freqProd);
+double[] convSig = new double[timeDomain.length];
+        for(int i = 0; i < sig1.length; i++){
+            convSig[i] = timeDomain[i].getReal();
+        }
+return convSig;
+    }
+
     public static void convTest(){
         double[] sig1 = ReadSound.readSoundDoubles("cathedral.wav");
-        double[] sig2 = ReadSound.readSoundDoubles("cello.wav");
+        double[] sig2 = ReadSound.readSoundDoubles("additivve0.wav");
         boolean pitchMatch = false;
         if(pitchMatch)
             sig2 = matchPitch(sig1, sig2);
@@ -175,7 +198,7 @@ public class FFT2
         }
         sig2 = Arrays.copyOf(sig2, sig1.length);
 
-        double[] convSig = convolutedTDSig(sig1,sig2);
+        double[] convSig = convAsImaginaryProduct(sig1,sig2);//convolutedTDSig
         /*
         for(int i = 0; i < convSig.length; i++){
         if(convSig[i] != 0)
@@ -192,8 +215,12 @@ public class FFT2
         ww.render();
     }
 
+    public static void main(String[] args) {
+        convTest();
+    }
+
     public static void dynamicConvTest(){
-        double[] sig1 = ReadSound.readSoundDoubles("cello.wav");
+        double[] sig1 = ReadSound.readSoundDoubles("additivve0.wav");
         double[] sig2 = ReadSound.readSoundDoubles("cathedral.wav");
         boolean pitchMatch = false;
         if(pitchMatch)
