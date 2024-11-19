@@ -6,6 +6,9 @@ import org.apache.commons.math3.complex.Complex;
 import java.util.Collections;
 import java.util.Comparator;
 /**
+
+The math3 dependency can be found at https://repo.maven.apache.org/maven2/org/apache/commons/commons-math3/3.6.1/
+ * 
  * Write a description of class FFT2 here.
  *
  * @author (your name)
